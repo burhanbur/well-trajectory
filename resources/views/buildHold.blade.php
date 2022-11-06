@@ -69,15 +69,15 @@
             <div class="inputArea">
                 <form method="GET" action="">
                     <label for="kop">Kick Of Point (V1):</label><br />
-                    <input type="number" step="any" id="kop" name="kop" class="form-control-custom" onkeypress="nextfield('target')" value="{{ $request->get('kop') }}" /> ft<br />
+                    <input type="number" step="any" id="kop" name="kop" class="form-control-custom" onkeypress="nextfield('target')" required value="{{ $request->get('kop') }}" /> ft<br />
                     <label for="target">Target (V3):</label><br />
-                    <input type="number" step="any" id="target" name="target" class="form-control-custom" onkeypress="nextfield('n')" value="{{ $request->get('target') }}" /> ft<br />
+                    <input type="number" step="any" id="target" name="target" class="form-control-custom" onkeypress="nextfield('n')" required value="{{ $request->get('target') }}" /> ft<br />
                     <label for="n">Northing:</label><br />
-                    <input type="number" step="any" id="n" name="n" class="form-control-custom" onkeypress="nextfield('e')" value="{{ $request->get('n') }}" /> ft<br />
+                    <input type="number" step="any" id="n" name="n" class="form-control-custom" onkeypress="nextfield('e')"  required value="{{ $request->get('n') }}" /> ft<br />
                     <label for="e">Easting:</label><br />
-                    <input type="number" step="any" id="e" name="e" class="form-control-custom" onkeypress="nextfield('bur')" value="{{ $request->get('e') }}"/> ft<br />
+                    <input type="number" step="any" id="e" name="e" class="form-control-custom" onkeypress="nextfield('bur')" required value="{{ $request->get('e') }}"/> ft<br />
                     <label for="bur">Build Up Rate (BUR):</label><br />
-                    <input type="number" step="any" id="bur" name="bur" class="form-control-custom" onkeypress="nextfield('calculate')" value="{{ $request->get('bur') }}"/> deg/100ft<br /><br />
+                    <input type="number" step="any" id="bur" name="bur" class="form-control-custom" onkeypress="nextfield('calculate')" required value="{{ $request->get('bur') }}"/> deg/100ft<br /><br />
                     <button type="submit" class="btn btn-primary" id="calculate"> <i class="fa fa-calculator"></i> Calculate </button>
                 </form>
             </div>
