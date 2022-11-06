@@ -9,7 +9,7 @@
     }
 
     .form-control-custom {
-        width: 60%;
+        width: 70%;
         height: calc(1.5em + 0.75rem + 2px);
         padding: 0.375rem 0.75rem;
         font-size: 1rem;
@@ -25,6 +25,42 @@
 </style>
 @endsection
 
+@section('js')
+<script>
+    var xValues = [50,60,70,80,90,100,110,120,130,140,150];
+    var yValues = [7,8,8,9,9,9,10,11,14,14,15];
+
+    var myChart = new Chart("myChart", {
+      type: "line",
+      data: {
+        labels: xValues,
+        datasets: [{
+          fill: false,
+          lineTension: 0,
+          backgroundColor: "rgba(0,0,255,1.0)",
+          borderColor: "rgba(0,0,255,0.1)",
+          data: yValues
+        }]
+      },
+      options: {
+        legend: {
+            display: false,
+        },
+        scales: {
+            yAxes: [
+                {
+                    ticks: {
+                        min: 6, 
+                        max:16
+                    }
+                }
+            ],
+        },
+      }
+    });
+</script>
+@endsection
+
 @section('container')
 <div class="container"><br>
     <h3> Build Hold </h3><br>
@@ -37,7 +73,7 @@
                     <label for="target">Target (V3):</label><br />
                     <input type="number" step="any" id="target" name="target" class="form-control-custom" onkeypress="nextfield('n')" value="{{ $request->get('target') }}" /> ft<br />
                     <label for="n">Northing:</label><br />
-                    <input type="number" step="any" id="n" name="n" class="form-control-custom" onkeypress="nextfield('e')" value="{{ $request->get('e') }}" /> ft<br />
+                    <input type="number" step="any" id="n" name="n" class="form-control-custom" onkeypress="nextfield('e')" value="{{ $request->get('n') }}" /> ft<br />
                     <label for="e">Easting:</label><br />
                     <input type="number" step="any" id="e" name="e" class="form-control-custom" onkeypress="nextfield('bur')" value="{{ $request->get('e') }}"/> ft<br />
                     <label for="bur">Build Up Rate (BUR):</label><br />
@@ -48,60 +84,77 @@
         </div>
         <div class="col-sm-8">
             <div class="grafikArea">
-                <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
+                <canvas id="myChart" style="width:100%; max-width:700px;"></canvas>
             </div>
         </div>
     </div>
+
     <div class="output-area">
-        <div class="endOfBuild">
-            <br />
-            <h3 class="text-center">End Of Build (EOB)</h3>
-            <table class="table table-striped" id="eob-table">
-            <tr>
-                <th>MD</th>
-                <th>VD</th>
-                <th>Displacement</th>
-            </tr>
-            <tr>
-                <td>{{$eob_md}}</td>
-                <td>{{$eob_vd}}</td>
-                <td>{{$eob_displacement}}</td>
-            </tr>
-            </table>
-            <br />
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="endOfBuild">
+                    <br />
+                    <h3 class="text-center">End Of Build (EOB)</h3>
+                    <table class="table table-striped" id="eob-table">
+                    <tr>
+                        <th class="text-center">MD</th>
+                        <th class="text-center">VD</th>
+                        <th class="text-center">Displacement</th>
+                    </tr>
+                    <tr>
+                        <td>{{ round($eob_md, 3) }}</td>
+                        <td>{{ round($eob_vd, 3) }}</td>
+                        <td>{{ round($eob_displacement, 3) }}</td>
+                    </tr>
+                    </table>
+                    <br />
 
-            <h3 class="text-center">Target</h3>
-            <table class="table table-striped" id="target-table">
-            <tr>
-                <th>MD</th>
-                <th>Displacement</th>
-            </tr>
-            <tr>
-                <td>{{$target_md}}</td>
-                <td>{{$target_displacement}}</td>
-            </tr>
-            </table>
-        </div>
+                    <h3 class="text-center">Target</h3>
+                    <table class="table table-striped" id="target-table">
+                    <tr>
+                        <th class="text-center">MD</th>
+                        <th class="text-center">Displacement</th>
+                    </tr>
+                    <tr>
+                        <td>{{ round($target_md, 3) }}</td>
+                        <td>{{ round($target_displacement, 3) }}</td>
+                    </tr>
+                    </table>
+                </div>
+            </div>
 
-        <div class="tabelKedalaman">
-            <br />
-            <h3 class="text-center">Depth Table</h3>
-            <table class="table table-striped" id="depth-table">
-            <tr>
-                <th>MD (ft) </th>
-                <th>Inclination (deg)</th>
-                <th>TVD (ft) </th>
-                <th>Total Departure (ft)</th>
-                <th>Status</th>
-            </tr>
-            <tr>
-                <td>0</td>
-                <td></td>
-                <td>0</td>
-                <td>0</td>
-                <td>Vertical</td>
-            </tr>
-            </table>
+            <div class="col-sm-8">
+                <div class="tabelKedalaman">
+                    <br />
+                    <h3 class="text-center">Depth Table</h3>
+                    <table class="table table-striped" id="depth-table">
+                    <tr>
+                        <th class="text-center">MD (ft) </th>
+                        <th class="text-center">Inclination (deg)</th>
+                        <th class="text-center">TVD (ft) </th>
+                        <th class="text-center">Total Departure (ft)</th>
+                        <th class="text-center">Status</th>
+                    </tr>
+                    <!-- <tr>
+                        <td class="text-center">0</td>
+                        <td class="text-center"></td>
+                        <td class="text-center">0</td>
+                        <td class="text-center">0</td>
+                        <td class="text-center">Vertical</td>
+                    </tr> -->
+                    @foreach($depth as $row)
+                        <tr>
+                            <td class="text-center">{{ round($row['md'], 3) }}</td>
+                            <td class="text-center">{{ round($row['inclination'], 6) }}</td>
+                            <td class="text-center">{{ round($row['tvd'], 3) }}</td>
+                            <td class="text-center">{{ round($row['total_departure'], 6) }}</td>
+                            <td class="text-center">{{ $row['status'] }}</td>
+                        </tr>
+                    @endforeach
+                    </table>
+                </div>
+            </div>
+            
         </div>
     </div>
 </div>

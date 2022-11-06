@@ -16,33 +16,39 @@ class BuildHoldController extends Controller
         $target_md = 0;
         $target_displacement = 0;
 
-        $bur = $request->input('bur');
-        $kop = $request->input('kop');
+        $bur = $request->input('bur'); // build up rate
+        $kop = $request->input('kop'); // kick of point
 
-        $target = $request->input('target');
-        $n = $request->input('n');
-        $e = $request->input('e');
+        $target = $request->input('target'); // target
+        $n = $request->input('n'); // northing
+        $e = $request->input('e'); // easting
 
         if ($bur && $kop && $target && $n && $e) {
-            $pi = 3.1415926535898;
-            $r = ((180*100)/($bur*$pi));
-            $d2 = (sqrt(pow($n, $n) + pow($e, $e)));
+            $pi = pi();
 
+            // radius of curvature
+            $r = ((180 * 100) / ($bur * $pi));
+            
+            // horizontal displacement
+            $d2 = pow((pow($n, 2) + pow($e, 2)), 0.5);
+
+            // line DC
             if ($d2 > $r) {
                 $lineDC = $d2 - $r;
             } else {
                 $lineDC = $r - $d2;
             }
 
+            // line DO
             if ($d2 > $r) {
                 $lineDO = $target - $kop;
             } else {
                 $lineDO = $kop - $target;
             }
 
-            $sudutDOC = (rad2deg(atan($lineDC/$lineDO)));
+            $sudutDOC = (rad2deg(atan($lineDC / $lineDO)));
             $lineOC = ($lineDO/(cos(deg2rad($sudutDOC))));
-            $sudutBOC = (rad2deg(acos($r/$lineOC)));
+            $sudutBOC = (rad2deg(acos($r / $lineOC)));
 
             if ($d2 > $r) {
                 $sudutBOD = ($sudutBOC - $sudutDOC);
@@ -57,27 +63,140 @@ class BuildHoldController extends Controller
             }
         
             if ($d2 > $r) {
-                $lineBC = (sqrt(($lineOC*$lineOC)-($r*$r)));
+                $lineBC = (sqrt(($lineOC * $lineOC) - ($r * $r)));
             } else {
-                $lineBC = (sqrt(($lineOC*$lineOC)+($r*$r)));
+                $lineBC = (sqrt(($lineOC * $lineOC) + ($r * $r)));
             }
         
             if ($d2 > $r) {
-                $lineEC = ($lineBC*(sin(deg2rad($maximum_angle_of_well))));
+                $lineEC = ($lineBC * (sin(deg2rad($maximum_angle_of_well))));
             } else {
-                $lineEC = ($lineBC*(sin(deg2rad($maximum_angle_of_well))));
+                $lineEC = ($lineBC * (sin(deg2rad($maximum_angle_of_well))));
             }
 
-            $eob_md = ($kop+(($maximum_angle_of_well*100)/$bur));
-            $eob_vd = ($kop+($r*sin(deg2rad($maximum_angle_of_well))));
-            $eob_displacement = ($r*(1-cos(deg2rad($maximum_angle_of_well))));
+            $eob_md = ($kop + (($maximum_angle_of_well * 100) / $bur));
+            $eob_vd = ($kop + ($r * sin(deg2rad($maximum_angle_of_well))));
+            $eob_displacement = ($r * (1 - cos(deg2rad($maximum_angle_of_well))));
 
             $target_md = ($eob_md + $lineBC);
             $target_displacement = ($lineEC + $eob_displacement);
         }
 
+        $depth = [];
+
+        $inc = 1;
+        $inclanation = 0;
+
+        // vertical
+        for ($i=0; $i <= $kop; $i+=100) {
+            if ($i == $kop) {
+                $status = 'KOP';
+
+                // inclination condition
+                $inclCondition = $i <= $kop || $eob_md < $i;
+            } else {
+                $status = 'Vertical';
+
+                // inclination condition
+                $inclCondition = $i < $kop || $eob_md < $i;
+            }
+
+            // find inclination
+            if ($inclCondition) {
+
+            } else {
+                $inclanation = 2 + $inclanation;
+            }
+
+            $depth[$inc]['md'] = $i;
+            $depth[$inc]['inclination'] = $inclanation;
+            $depth[$inc]['tvd'] = $i;
+            $depth[$inc]['total_departure'] = 0;
+            $depth[$inc]['status'] = $status;
+
+            $inc++;
+        }
+
+        // build
+        for ($i = $i; $i <= $eob_md; $i+=100) {
+            $status = 'Build';
+
+            // inclination condition
+            if ($i == $kop) {
+                $inclCondition = $i <= $kop || $eob_md < $i;
+            } else {
+                $inclCondition = $i < $kop || $eob_md < $i;
+            }
+
+            // find inclination
+            if ($inclCondition) {
+
+            } else {
+                $inclanation = 2 + $inclanation;
+            }
+
+            // find tvd
+            $tvd = $kop + ($r * sin(deg2rad($inclanation))); // kenapa di inclanation 52 rumusnya berubah?
+
+            // find total_departure
+            $total_departure = $r * (1 - cos(deg2rad($inclanation))); // kenapa di inclanation 52 rumusnya berubah?
+
+            $depth[$inc]['md'] = $i;
+            $depth[$inc]['inclination'] = $inclanation;
+            $depth[$inc]['tvd'] = $tvd;
+            $depth[$inc]['total_departure'] = $total_departure;
+            $depth[$inc]['status'] = $status;
+
+            $inc++;
+        }
+
+        // end of build
+        $status = 'End of Build';
+        $inclanation = $inclanation + (($eob_md - ($i - 100)) * ((float) $bur / 100));
+        $tvdEOB = $kop + ($r * sin(deg2rad($inclanation)));
+        $total_departureEOB = $r * (1 - cos(deg2rad($inclanation)));
+
+        $depth[$inc+1]['md'] = $eob_md;
+        $depth[$inc+1]['inclination'] = $inclanation;
+        $depth[$inc+1]['tvd'] = $tvdEOB;
+        $depth[$inc+1]['total_departure'] = $total_departureEOB;
+        $depth[$inc+1]['status'] = $status;
+
+        $inc++;
+
+        // hold
+        for ($i = $i; $i <= $target_md; $i+=100) {
+            $status = 'Hold';
+
+            // find tvd
+            $tvd = (cos(deg2rad($inclanation))) * ($i - $eob_md) + $tvdEOB;
+
+            // find total_departure
+            $total_departure = $total_departureEOB + (sin(deg2rad($inclanation))) * ($i - $eob_md);
+
+            $depth[$inc+1]['md'] = $i;
+            $depth[$inc+1]['inclination'] = $inclanation;
+            $depth[$inc+1]['tvd'] = $tvd;
+            $depth[$inc+1]['total_departure'] = $total_departure;
+            $depth[$inc+1]['status'] = $status;
+
+            $inc++;
+        }
+
+        // target
+        $status = 'Target';
+        $tvd = (cos(deg2rad($inclanation))) * ($target_md - $eob_md) + $tvdEOB;
+        $total_departure = $total_departureEOB + (sin(deg2rad($inclanation))) * ($target_md - $eob_md);
+
+        $depth[$inc+1]['md'] = $target_md;
+        $depth[$inc+1]['inclination'] = $inclanation;
+        $depth[$inc+1]['tvd'] = $tvd;
+        $depth[$inc+1]['total_departure'] = $total_departure;
+        $depth[$inc+1]['status'] = $status;
+
         return view('buildHold',[
             'request' => $request,
+            'depth' => $depth,
             'eob_md' => $eob_md,
             'eob_vd' => $eob_vd,
             'eob_displacement' => $eob_displacement,
