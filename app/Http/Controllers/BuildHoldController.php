@@ -11,6 +11,9 @@ class BuildHoldController extends Controller
     {
         $depth = [];
 
+        $mdChartValue = [];
+        $tvdChartValue = [];
+
         $eob_md = 0;
         $eob_vd = 0;
         $eob_displacement = 0;
@@ -102,14 +105,23 @@ class BuildHoldController extends Controller
                     $inclanation = 2 + $inclanation;
                 }
 
+                $total_departure = 0;
+
                 $depth[$inc]['md'] = $i;
                 $depth[$inc]['inclination'] = $inclanation;
                 $depth[$inc]['tvd'] = $i;
-                $depth[$inc]['total_departure'] = 0;
+                $depth[$inc]['total_departure'] = $total_departure;
                 $depth[$inc]['status'] = $status;
+
+
+                // $mdChartValue[] = $total_departure;
+                // $tvdChartValue[] = $i;
 
                 $inc++;
             }
+
+            $mdChartValue[] = $total_departure;
+            $tvdChartValue[] = $i-100;
 
             // build
             for ($i = $i; $i <= $eob_md; $i+=100) {
@@ -141,6 +153,9 @@ class BuildHoldController extends Controller
                 $depth[$inc]['total_departure'] = $total_departure;
                 $depth[$inc]['status'] = $status;
 
+                $mdChartValue[] = round($total_departure, 2);
+                $tvdChartValue[] = $tvd;
+
                 $inc++;
             }
 
@@ -155,6 +170,9 @@ class BuildHoldController extends Controller
             $depth[$inc+1]['tvd'] = $tvdEOB;
             $depth[$inc+1]['total_departure'] = $total_departureEOB;
             $depth[$inc+1]['status'] = $status;
+
+            $mdChartValue[] = round($total_departureEOB, 2);
+            $tvdChartValue[] = $tvdEOB;
 
             $inc++;
 
@@ -174,6 +192,9 @@ class BuildHoldController extends Controller
                 $depth[$inc+1]['total_departure'] = $total_departure;
                 $depth[$inc+1]['status'] = $status;
 
+                $mdChartValue[] = round($total_departure, 2);
+                $tvdChartValue[] = $tvd;
+
                 $inc++;
             }
 
@@ -186,10 +207,18 @@ class BuildHoldController extends Controller
             $depth[$inc+1]['inclination'] = $inclanation;
             $depth[$inc+1]['tvd'] = $tvd;
             $depth[$inc+1]['total_departure'] = $total_departure;
-            $depth[$inc+1]['status'] = $status;   
+            $depth[$inc+1]['status'] = $status;
+
+            $mdChartValue[] = round($total_departure, 2);
+            $tvdChartValue[] = $tvd;
         }
 
-        return view('buildHold',[
+        // echo "<pre>";
+        // var_dump($mdChartValue);
+        // var_dump($tvdChartValue);
+        // die();
+
+        return view('build-hold',[
             'request' => $request,
             'depth' => $depth,
             'eob_md' => $eob_md,
@@ -197,12 +226,9 @@ class BuildHoldController extends Controller
             'eob_displacement' => $eob_displacement,
             'target_md' => $target_md,
             'target_displacement' => $target_displacement,
+            'mdChartValue' => $mdChartValue,
+            'tvdChartValue' => $tvdChartValue,
         ]);
     
-    }
-
-    public function calculate(Request $request)
-    {
-        return redirect()->back();
     }
 }

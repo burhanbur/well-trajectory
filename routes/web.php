@@ -2,6 +2,13 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BuildHoldController;
+use App\Http\Controllers\BuildHoldDropController;
+use App\Http\Controllers\HorizontalWellController;
+
+use App\Http\Controllers\EquivalentCirculatingController;
+use App\Http\Controllers\FlowrateMinimumController;
+use App\Http\Controllers\PressureLossController;
+use App\Http\Controllers\RheologicalController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,6 +22,13 @@ use App\Http\Controllers\BuildHoldController;
 */
 
 Route::get('/', [BuildHoldController::class, 'index']);
-Route::post('calculate', [BuildHoldController::class, 'calculate'])->name('calculate.build.hold');
 
+Route::group(['prefix' => 'well-trajectory'], function () {
+	Route::get('build-hold', [BuildHoldController::class, 'index'])->name('build.hold');
+	Route::get('build-hold-drop', [BuildHoldDropController::class, 'index'])->name('build.hold.drop');
+	Route::get('horizontal-well', [HorizontalWellController::class, 'index'])->name('horizontal.well');
+});
 
+Route::group(['prefix' => 'hydraulic'], function () {
+	Route::get('rheological', [RheologicalController::class, 'index'])->name('rheological');
+});

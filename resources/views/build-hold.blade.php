@@ -27,8 +27,11 @@
 
 @section('js')
 <script>
-    var xValues = [50,60,70,80,90,100,110,120,130,140,150];
-    var yValues = [7,8,8,9,9,9,10,11,14,14,15];
+    // var xValues = [50,60,70,80,90,100,110,120,130,140,150]; // md
+    // var yValues = [7,8,8,9,9,9,10,11,14,14,15]; // tvd
+
+    var xValues = <?= json_encode($mdChartValue) ?>; // md
+    var yValues = <?= json_encode($tvdChartValue) ?>; // tvd
 
     var myChart = new Chart("myChart", {
       type: "line",
@@ -38,7 +41,8 @@
           fill: false,
           lineTension: 0,
           backgroundColor: "rgba(0,0,255,1.0)",
-          borderColor: "rgba(0,0,255,0.1)",
+          borderColor: "rgba(0,0,255,1.0)",
+          borderWidth: 8,
           data: yValues
         }]
       },
@@ -50,12 +54,22 @@
             yAxes: [
                 {
                     ticks: {
-                        min: 6, 
-                        max:16
-                    }
+                        reverse: true
+                    },
+                    stacked: true
+                }
+            ],
+            xAxes: [
+                {
+                    stacked: true
                 }
             ],
         },
+        elements: {
+            point: {
+                radius: 0
+            }
+        }
       }
     });
 </script>
@@ -68,7 +82,7 @@
         <div class="col-sm-4">
             <div class="inputArea">
                 <form method="GET" action="">
-                    <label for="kop">Kick Of Point (V1):</label><br />
+                    <label for="kop">Kick of Point (V1):</label><br />
                     <input type="number" step="any" id="kop" name="kop" class="form-control-custom" onkeypress="nextfield('target')" required value="{{ $request->get('kop') }}" /> ft<br />
                     <label for="target">Target (V3):</label><br />
                     <input type="number" step="any" id="target" name="target" class="form-control-custom" onkeypress="nextfield('n')" required value="{{ $request->get('target') }}" /> ft<br />
@@ -94,16 +108,18 @@
             <div class="col-sm-4">
                 <div class="endOfBuild">
                     <br />
-                    <h3 class="text-center">End Of Build (EOB)</h3>
+                    <h3 class="text-center">End of Build (EOB)</h3>
                     <table class="table table-striped" id="eob-table">
                     <tr>
-                        <th class="text-center">MD</th>
-                        <th class="text-center">VD</th>
-                        <th class="text-center">Displacement</th>
+                        <th>MD</th>
+                        <td>{{ round($eob_md, 3) }}</td>
                     </tr>
                     <tr>
-                        <td>{{ round($eob_md, 3) }}</td>
+                        <th>VD</th>
                         <td>{{ round($eob_vd, 3) }}</td>
+                    </tr>
+                    <tr>
+                        <th>Displacement</th>
                         <td>{{ round($eob_displacement, 3) }}</td>
                     </tr>
                     </table>
@@ -112,11 +128,11 @@
                     <h3 class="text-center">Target</h3>
                     <table class="table table-striped" id="target-table">
                     <tr>
-                        <th class="text-center">MD</th>
-                        <th class="text-center">Displacement</th>
+                        <th>MD</th>
+                        <td>{{ round($target_md, 3) }}</td>
                     </tr>
                     <tr>
-                        <td>{{ round($target_md, 3) }}</td>
+                        <th>Displacement</th>
                         <td>{{ round($target_displacement, 3) }}</td>
                     </tr>
                     </table>
