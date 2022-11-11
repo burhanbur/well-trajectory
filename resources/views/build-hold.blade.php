@@ -77,9 +77,9 @@
 
 @section('container')
 <div class="container"><br>
-    <h3> Build Hold </h3><br>
+    <h3 class="text-center"> Build Hold </h3><br>
     <div class="row">
-        <div class="col-sm-4">
+        <div class="col-md-4">
             <div class="inputArea">
                 <form method="GET" action="">
                     <label for="kop">Kick of Point (V1):</label><br />
@@ -96,7 +96,7 @@
                 </form>
             </div>
         </div>
-        <div class="col-sm-8">
+        <div class="col-md-8">
             <div class="grafikArea">
                 <canvas id="myChart" style="width:100%; max-width:700px;"></canvas>
             </div>
@@ -105,7 +105,7 @@
 
     <div class="output-area">
         <div class="row">
-            <div class="col-sm-4">
+            <div class="col-md-4">
                 <div class="endOfBuild">
                     <br />
                     <h3 class="text-center">End of Build (EOB)</h3>
@@ -139,7 +139,7 @@
                 </div>
             </div>
 
-            <div class="col-sm-8">
+            <div class="col-md-8">
                 <div class="tabelKedalaman">
                     <br />
                     <h3 class="text-center">Depth Table</h3>
