@@ -27,7 +27,7 @@
 
 @section('js')
 <script>
-    var xValues = [50,60,70,80,90,100,110,120,130,140,150]; // md
+    var xValues = <?= json_encode($xChartValues); ?>
     var yValues = [7,8,8,9,9,9,10,11,14,14,15]; // tvd
 
     var myChart = new Chart("myChart", {
@@ -51,7 +51,7 @@
             yAxes: [
                 {
                     ticks: {
-                        reverse: true
+                        reverse: false
                     },
                     stacked: true
                 }
@@ -87,11 +87,11 @@
 		        			<th class="text-center">N</th>
 		        			<th class="text-center">Ɵ</th>
 		        		</tr>
-		        		@for($i=0; $i < count((array) $n); $i++)
+		        		@for($i=0; $i < count((array) $nParam); $i++)
 		            		<tr>
-		            			<th>{{ $n[$i] }}</th>
+		            			<th>{{ $nParam[$i] }}</th>
 		            			<td>
-				                    <input type="number" step="any" name="dial_reading_fann_data[]" class="form-control-custom" required value="{{ $request->dial_reading_fann_data[$i] }}" />
+				                    <input type="number" step="any" name="dial_reading_fann_data[]" class="form-control-custom" required value="{{ (double) @$request->dial_reading_fann_data[$i] }}" />
                 				</td>
 		            		</tr>
 		        		@endfor
@@ -124,7 +124,7 @@
         		@for($i=0; $i < count((array) $n); $i++)
             		<tr>
             			<th>{{ $n[$i] }}</th>
-            			<td>{{ $request->dial_reading_fann_data[$i] }}</td>
+            			<td>{{ (double) @$request->dial_reading_fann_data[$i] }}</td>
             			<td>{{ $n[$i] * 1.70333 }}</td>
             			<td>{{ 0.01065 * (double) @$request->dial_reading_fann_data[$i] }}</td>
             			<td>{{ 0.01065 * (double) @$request->dial_reading_fann_data[$i] * 0.0069444444443639 }}</td>
@@ -148,13 +148,13 @@
         		@for($i=0; $i < count((array) $n); $i++)
         			@php 
         				$cColumn = $n[$i] * 1.70333;
-        				$dColumn = ((300 / $n[0]) * $request->dial_reading_fann_data[0]) * 0.001;
+        				$dColumn = ((300 / $n[0]) * (double) @$request->dial_reading_fann_data[0]) * 0.001;
         				$eColumn = $dColumn * $cColumn;
         				$fColumn = $eColumn * 0.000145038;
         			@endphp
             		<tr>
             			<th>{{ $n[$i] }}</th>
-            			<td>{{ $request->dial_reading_fann_data[$i] }}</td>
+            			<td>{{ (double) @$request->dial_reading_fann_data[$i] }}</td>
             			<td>{{ $cColumn }}</td>
             			<td>{{ $dColumn }}</td>
             			<td>{{ $eColumn }}</td>
@@ -180,14 +180,14 @@
         		@for($i=0; $i < count((array) $n); $i++)
         			@php 
         				$cColumn = $n[$i] * 1.70333;
-        				$dColumn = log10(($request->dial_reading_fann_data[0] * 1.70333) / ($request->dial_reading_fann_data[1] * 1.70333)) * 3.32192809;
-        				$eColumn = ((510 * $request->dial_reading_fann_data[0]) / (pow((1.703 * $n[0]), $dColumn))) * 0.001;
+        				$dColumn = log10(((double) @$request->dial_reading_fann_data[0] * 1.70333) / ((double) @$request->dial_reading_fann_data[1] * 1.70333)) * 3.32192809;
+        				$eColumn = ((510 * (double) @$request->dial_reading_fann_data[0]) / (pow((1.703 * $n[0]), $dColumn))) * 0.001;
         				$fColumn = $eColumn * (pow($cColumn, $dColumn));
         				$gColumn = $fColumn * 0.000145038;
         			@endphp
             		<tr>
             			<th>{{ $n[$i] }}</th>
-            			<td>{{ $request->dial_reading_fann_data[$i] }}</td>
+            			<td>{{ (double) @$request->dial_reading_fann_data[$i] }}</td>
             			<td>{{ $cColumn }}</td>
             			<td>{{ $dColumn }}</td>
             			<td>{{ $eColumn }}</td>
@@ -211,11 +211,13 @@
         			<th class="text-center">Ʈ (Pa)</th>
         			<th class="text-center">Ʈ (Psi)</th>
         		</tr>
-        		@php
-        			$dColumnParam = ((300 / ($n[0] - $n[1])) * ($request->dial_reading_fann_data[0] - $request->dial_reading_fann_data[1]) * 0.001);
-        			$dColumnParam2 = ((300 / ($n[0] - $n[1])) * ($request->dial_reading_fann_data[0] - $request->dial_reading_fann_data[1]));
-        			$eColumn = ($request->dial_reading_fann_data[1] - $dColumnParam2) * 0.47880258888889;
-        		@endphp
+        		@if (count((array) $n) > 0)
+		    		@php
+		    			$dColumnParam = ((300 / ($n[0] - $n[1])) * ((double) @$request->dial_reading_fann_data[0] - (double) @$request->dial_reading_fann_data[1]) * 0.001);
+		    			$dColumnParam2 = ((300 / ($n[0] - $n[1])) * ((double) @$request->dial_reading_fann_data[0] - (double) @$request->dial_reading_fann_data[1]));
+		    			$eColumn = ((double) @$request->dial_reading_fann_data[1] - $dColumnParam2) * 0.47880258888889;
+		    		@endphp
+        		@endif
         		@for($i=0; $i < count((array) $n); $i++)
         			@php 
         				$cColumn = $n[$i] * 1.70333;
@@ -224,7 +226,7 @@
         			@endphp
             		<tr>
             			<th>{{ $n[$i] }}</th>
-            			<td>{{ $request->dial_reading_fann_data[$i] }}</td>
+            			<td>{{ (double) @$request->dial_reading_fann_data[$i] }}</td>
             			<td>{{ $cColumn }}</td>
             			<td>
             				@if ($i == 0)
@@ -261,12 +263,16 @@
         			<th class="text-center">Ʈ (Pa)</th>
         			<th class="text-center">Ʈ (Psi)</th>
         		</tr>
-        		@php
-        			$dColumnParam2 = (2 * $request->dial_reading_fann_data[5]) - $request->dial_reading_fann_data[4];
-        			$dColumnParam = $dColumnParam2 * 0.47880258888889;
-        			$eColumn = 3.32192809 * (log10(($request->dial_reading_fann_data[0] - $dColumnParam2) / ($request->dial_reading_fann_data[1] - $dColumnParam2)));
-        			$fColumn = 500 * (($request->dial_reading_fann_data[1] - $dColumnParam2) / (pow(511, $eColumn))) * 0.001;
-        		@endphp
+
+        		@if (count((array) $n) > 0)
+	        		@php
+	        			$dColumnParam2 = (2 * (double) @$request->dial_reading_fann_data[5]) - (double) @$request->dial_reading_fann_data[4];
+	        			$dColumnParam = $dColumnParam2 * 0.47880258888889;
+	        			$eColumn = 3.32192809 * (log10(((double) @$request->dial_reading_fann_data[0] - $dColumnParam2) / ((double) @$request->dial_reading_fann_data[1] - $dColumnParam2)));
+	        			$fColumn = 500 * (((double) @$request->dial_reading_fann_data[1] - $dColumnParam2) / (pow(511, $eColumn))) * 0.001;
+	        		@endphp
+	        	@endif
+
         		@for($i=0; $i < count((array) $n); $i++)
         			@php 
         				$cColumn = $n[$i] * 1.70333;
@@ -275,7 +281,7 @@
         			@endphp
             		<tr>
             			<th>{{ $n[$i] }}</th>
-            			<td>{{ $request->dial_reading_fann_data[$i] }}</td>
+            			<td>{{ (double) @$request->dial_reading_fann_data[$i] }}</td>
             			<td>{{ $cColumn }}</td>
             			<td>
             				@if ($i == 0)
