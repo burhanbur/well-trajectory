@@ -16,25 +16,16 @@
 
 <nav class="navbar navbar-expand-lg bg-dark navbar-dark sticky-top">
   <div class="container">
-    <a class="navbar-brand" href="{{ url('/') }}">Harry UP</a>
+    <a class="navbar-brand" href="{{ url('/') }}">TRACY UP</a>
     <ul class="navbar-nav">
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">Well Trajectory </a>
-        <div class="dropdown-menu">
-          <a class="dropdown-item" href="{{ route('build.hold') }}">Build Hold</a>
-          <a class="dropdown-item" href="{{ route('build.hold.drop') }}">Build Hold Drop</a>
-          <a class="dropdown-item" href="{{ route('horizontal.well') }}">Horizontal Well</a>
-        </div>
+      <li class="nav-item">
+        <a class="nav-link @if (Request::is('well-trajectory/build-hold*') && !Request::is('well-trajectory/build-hold-drop*')) active @endif" href="{{ route('build.hold') }}">Build Hold</a>
       </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">Hydraulics </a>
-        <div class="dropdown-menu">
-          <a class="dropdown-item" href="{{ route('rheological') }}">Rheological</a>
-          <a class="dropdown-item" href="#">Pressure Loss</a>
-          <a class="dropdown-item" href="#">AFP</a>
-          <a class="dropdown-item" href="#">Equivalent Circulating Density</a>
-          <a class="dropdown-item" href="#">Flowrate Minimum Cuttings-done</a>
-        </div>
+      <li class="nav-item">
+        <a class="nav-link @if (Request::is('well-trajectory/build-hold-drop*')) active @endif" href="{{ route('build.hold.drop') }}">Build Hold Drop</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link @if (Request::is('well-trajectory/horizontal-well*')) active @endif" href="{{ route('horizontal.well') }}">Horizontal Well</a>
       </li>
     </ul>
   </div>

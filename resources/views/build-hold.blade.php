@@ -108,7 +108,7 @@
             <div class="col-md-4">
                 <div class="endOfBuild">
                     <br />
-                    <h3 class="text-center">End of Build (EOB)</h3>
+                    <h3 class="text-center">End of Build</h3>
                     <table class="table table-striped" id="eob-table">
                     <tr>
                         <th>MD</th>

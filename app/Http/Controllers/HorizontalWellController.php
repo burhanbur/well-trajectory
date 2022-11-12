@@ -9,6 +9,6 @@ class HorizontalWellController extends Controller
 {
     public function index(Request $request)
     {
-
+        return view('horizontal-well', get_defined_vars());
     }
 }

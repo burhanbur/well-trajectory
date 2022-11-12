@@ -213,11 +213,6 @@ class BuildHoldController extends Controller
             $tvdChartValue[] = $tvd;
         }
 
-        // echo "<pre>";
-        // var_dump($mdChartValue);
-        // var_dump($tvdChartValue);
-        // die();
-
         return view('build-hold',[
             'request' => $request,
             'depth' => $depth,
