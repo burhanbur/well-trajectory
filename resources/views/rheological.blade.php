@@ -27,8 +27,8 @@
 
 @section('js')
 <script>
-    var xValues = <?= json_encode($xChartValues); ?>
-    var yValues = [7,8,8,9,9,9,10,11,14,14,15]; // tvd
+    var xValues = <?= json_encode($xChartValues); ?>;
+    var yValues = <?= json_encode($yChartValues); ?>;
 
     var myChart = new Chart("myChart", {
       type: "line",
@@ -58,6 +58,9 @@
             ],
             xAxes: [
                 {
+                	ticks: {
+                		reverse: true
+                	},
                     stacked: true
                 }
             ],
@@ -79,32 +82,46 @@
     <br>
 
     <div class="row">
-        <div class="col-md-6">
-            <div class="inputArea">
-                <form method="GET" action="">
-                	<table class="table">
-		        		<tr>
-		        			<th class="text-center">N</th>
-		        			<th class="text-center">Ɵ</th>
-		        		</tr>
-		        		@for($i=0; $i < count((array) $nParam); $i++)
-		            		<tr>
-		            			<th>{{ $nParam[$i] }}</th>
-		            			<td>
-				                    <input type="number" step="any" name="dial_reading_fann_data[]" class="form-control-custom" required value="{{ (double) @$request->dial_reading_fann_data[$i] }}" />
-                				</td>
-		            		</tr>
-		        		@endfor
-		        	</table>
-                    <button type="submit" class="btn btn-primary" id="calculate"> <i class="fa fa-calculator"></i> Calculate </button>
-                </form>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="grafikArea">
-                <canvas id="myChart" style=""></canvas>
-            </div>
-        </div>
+    	<div class="col-md-12">
+	        <form method="GET" action="">
+	        	<div class="row">
+			        <div class="col-md-6">
+			            <div class="inputArea">
+			            	<table class="table">
+				        		<tr>
+				        			<th class="text-center">N</th>
+				        			<th class="text-center">Ɵ</th>
+				        		</tr>
+				        		@for($i=0; $i < count((array) $nParam); $i++)
+				            		<tr>
+				            			<th>{{ $nParam[$i] }}</th>
+				            			<td>
+						                    <input type="number" step="any" name="dial_reading_fann_data[]" class="form-control-custom" required value="{{ (double) @$request->dial_reading_fann_data[$i] }}" />
+			            				</td>
+				            		</tr>
+				        		@endfor
+				        	</table>
+			                    <button type="submit" class="btn btn-primary" id="calculate"> <i class="fa fa-calculator"></i> Calculate </button>
+			            </div>
+			        </div>
+			        <div class="col-md-6">
+			        	<strong>Pilih Model</strong>
+			        	<select class="form-control" name="model" required>
+			        		<option value="semua">Semua Model</option>
+			        		@foreach(\App\Helpers\Dropdown::listRheologicalModel() as $key => $value)
+			        			<option @if ($model == $key) selected @endif value="{{ $key }}">{{ $value }}</option>
+			        		@endforeach
+			        	</select>
+
+			        	<br>
+
+			            <div class="grafikArea">
+			                <canvas id="myChart" style=""></canvas>
+			            </div>
+			        </div>
+	        	</div>
+	        </form>
+    	</div>
     </div>
 
     <br>
