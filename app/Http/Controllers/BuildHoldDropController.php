@@ -173,6 +173,52 @@ class BuildHoldDropController extends Controller
             $tvdChartValue[] = $tvdEOB;
 
             $inc++;
+
+            // hold
+            for ($i = $i; $i <= $sod_md; $i+=100) {
+                $first = $i;
+                $status = 'Hold';
+
+                // find tvd
+                if ($i == $first) {
+                    $tvd = (cos(deg2rad($inclinationEOB)) * ($i - $eob_md)) + $tvdEOB;
+                } else {
+                    $tvd = (cos(deg2rad($inclinationEOB)) * ($i - ($i - 100))) + $tvd;
+                }
+
+                // find total_departure
+                $total_departure = $total_departureEOB + (sin(deg2rad($inclinationEOB)) * ($i - $eob_md));
+
+                $depth[$inc+1]['md'] = $i;
+                $depth[$inc+1]['inclination'] = $inclinationEOB;
+                $depth[$inc+1]['tvd'] = $tvd;
+                $depth[$inc+1]['total_departure'] = $total_departure;
+                $depth[$inc+1]['status'] = $status;
+
+                $mdChartValue[] = round($total_departure, 2);
+                $tvdChartValue[] = $tvd;
+
+                $inc++;
+            }
+
+            // start of drop
+            // $status = 'Start of Drop';
+            
+            // $inclinationEOB = ($eob_md - ($i - 100)) * ($bur / 100) + $inclination;
+            // $tvdEOB = ($radius_curvature_bur * sin(deg2rad($inclinationEOB))) + $tvdKOP;
+            // $total_departureEOB = $radius_curvature_bur * (1 - cos(deg2rad($inclinationEOB)));
+
+            // $depth[$inc+1]['md'] = $eob_md;
+            // $depth[$inc+1]['inclination'] = $inclinationEOB;
+            // $depth[$inc+1]['tvd'] = $tvdEOB;
+            // $depth[$inc+1]['total_departure'] = $total_departureEOB;
+            // $depth[$inc+1]['status'] = $status;
+
+            // $mdChartValue[] = round($total_departureEOB, 2);
+            // $tvdChartValue[] = $tvdEOB;
+
+            // $inc++;
+
         }
 
         // echo "<pre>";
