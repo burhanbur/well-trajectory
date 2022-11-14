@@ -178,7 +178,7 @@
                     @foreach($depth as $row)
                         <tr>
                             <td class="text-center">{{ round($row['md'], 3) }}</td>
-                            <td class="text-center">{{ round($row['inclination'], 6) }}</td>
+                            <td class="text-center">@if ($row['status'] == 'Target') {{ round($row['inclination'], 6) }} @else {{ $row['inclination'] }} @endif</td>
                             <td class="text-center">{{ round($row['tvd'], 3) }}</td>
                             <td class="text-center">{{ round($row['total_departure'], 6) }}</td>
                             <td class="text-center">{{ $row['status'] }}</td>

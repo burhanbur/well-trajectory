@@ -180,11 +180,11 @@ class BuildHoldDropController extends Controller
                 $status = 'Hold';
 
                 // find tvd
-                if ($i == $first) {
+                // if ($i == $first) {
                     $tvd = (cos(deg2rad($inclinationEOB)) * ($i - $eob_md)) + $tvdEOB;
-                } else {
-                    $tvd = (cos(deg2rad($inclinationEOB)) * ($i - ($i - 100))) + $tvd;
-                }
+                // } else {
+                //     $tvd = (cos(deg2rad($inclinationEOB)) * ($i - ($i - 100))) + $tvd;
+                // }
 
                 // find total_departure
                 $total_departure = $total_departureEOB + (sin(deg2rad($inclinationEOB)) * ($i - $eob_md));
@@ -202,23 +202,67 @@ class BuildHoldDropController extends Controller
             }
 
             // start of drop
-            // $status = 'Start of Drop';
-            
-            // $inclinationEOB = ($eob_md - ($i - 100)) * ($bur / 100) + $inclination;
-            // $tvdEOB = ($radius_curvature_bur * sin(deg2rad($inclinationEOB))) + $tvdKOP;
-            // $total_departureEOB = $radius_curvature_bur * (1 - cos(deg2rad($inclinationEOB)));
+            $status = 'Start of Drop';
 
-            // $depth[$inc+1]['md'] = $eob_md;
-            // $depth[$inc+1]['inclination'] = $inclinationEOB;
-            // $depth[$inc+1]['tvd'] = $tvdEOB;
-            // $depth[$inc+1]['total_departure'] = $total_departureEOB;
-            // $depth[$inc+1]['status'] = $status;
+            $tvdSOD = $tvd = (cos(deg2rad($inclinationEOB)) * ($sod_md - ($i - 100))) + $tvd;
+            $total_departureSOD = $horizontal_displacement - ($radius_curvature_dor * (1 - cos(deg2rad($max_inclination))));
 
-            // $mdChartValue[] = round($total_departureEOB, 2);
-            // $tvdChartValue[] = $tvdEOB;
+            $depth[$inc+1]['md'] = $sod_md;
+            $depth[$inc+1]['inclination'] = $inclinationEOB;
+            $depth[$inc+1]['tvd'] = $tvdSOD;
+            $depth[$inc+1]['total_departure'] = $total_departureSOD;
+            $depth[$inc+1]['status'] = $status;
 
-            // $inc++;
+            $mdChartValue[] = round($total_departureSOD, 2);
+            $tvdChartValue[] = $tvdSOD;
 
+            $inc++;
+
+            // drop
+            for ($i = $i; $i <= $eod_md; $i+=100) {
+                $first = $i;
+                $status = 'Drop';
+
+                // if ($i == $first) {
+                    $inclination = $inclinationEOB - (($i - $sod_md) * ($dor / 100));
+                    $tvd = $sod_vd + ($radius_curvature_dor * (sin(deg2rad($max_inclination)) - sin(deg2rad($inclination))));
+                // } else {
+                //     $inclination = '';
+                //     $tvd = (cos(deg2rad($inclinationEOB)) * ($i - ($i - 100))) + $tvd;
+                // }
+
+                // find total_departure
+                $total_departure = $total_departureSOD + ($radius_curvature_dor * (cos(deg2rad($inclination)) - cos(deg2rad($max_inclination))));
+
+                $depth[$inc+1]['md'] = $i;
+                $depth[$inc+1]['inclination'] = $inclination;
+                $depth[$inc+1]['tvd'] = $tvd;
+                $depth[$inc+1]['total_departure'] = $total_departure;
+                $depth[$inc+1]['status'] = $status;
+
+                $mdChartValue[] = round($total_departure, 2);
+                $tvdChartValue[] = $tvd;
+
+                $inc++;
+            }
+
+            // target
+            $status = 'Target';
+
+            $inclination = $inclination - (($eod_md - ($i - 100)) * ($dor / 100));
+            $tvd = $sod_vd + ($dor * (sin(deg2rad($max_inclination)) - sin(deg2rad($inclination))));
+            $total_departure = $total_departureSOD + ($radius_curvature_dor * (cos(deg2rad($inclination)) - cos(deg2rad($max_inclination))));
+
+            $depth[$inc+1]['md'] = $eod_md;
+            $depth[$inc+1]['inclination'] = $inclination;
+            $depth[$inc+1]['tvd'] = $tvd;
+            $depth[$inc+1]['total_departure'] = $total_departure;
+            $depth[$inc+1]['status'] = $status;
+
+            $mdChartValue[] = round($total_departure, 2);
+            $tvdChartValue[] = $tvd;
+
+            $inc++;
         }
 
         // echo "<pre>";
