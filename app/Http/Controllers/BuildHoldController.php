@@ -28,7 +28,7 @@ class BuildHoldController extends Controller
         $n = $request->input('n'); // northing
         $e = $request->input('e'); // easting
 
-        if ($bur && $kop && $target && $n && $e) {
+        if ($bur || $kop || $target || $n || $e) {
             $pi = pi();
 
             // radius of curvature
@@ -43,7 +43,7 @@ class BuildHoldController extends Controller
                 $lineDO = (double) $target - $kop;
             } else {
                 $lineDC = $r - $d2;
-                $lineDO = (double) $kop - $target;
+                $lineDO = (double) $target - $kop;
             }
 
             $sudutDOC = (rad2deg(atan($lineDC / $lineDO)));
@@ -59,13 +59,13 @@ class BuildHoldController extends Controller
             if ($d2 > $r) {
                 $maximum_angle_of_well = (90 - $sudutBOD);
             } else {
-                $maximum_angle_of_well = (90 + $sudutBOD);
+                $maximum_angle_of_well = (90 - $sudutBOD);
             }
         
             if ($d2 > $r) {
                 $lineBC = (sqrt(($lineOC * $lineOC) - ($r * $r)));
             } else {
-                $lineBC = (sqrt(($lineOC * $lineOC) + ($r * $r)));
+                $lineBC = (sqrt(($lineOC * $lineOC) - ($r * $r)));
             }
         
             if ($d2 > $r) {
@@ -75,8 +75,21 @@ class BuildHoldController extends Controller
             }
 
             $eob_md = ($kop + (($maximum_angle_of_well * 100) / $bur));
+
             $eob_vd = ($kop + ($r * sin(deg2rad($maximum_angle_of_well))));
             $eob_displacement = ($r * (1 - cos(deg2rad($maximum_angle_of_well))));
+
+            // echo "<pre>";
+            // var_dump($d2);
+            // var_dump($r);
+            // var_dump($eob_md);
+            // var_dump($lineBC);
+            // var_dump($sudutBOD);
+            // var_dump($kop);
+            // var_dump($maximum_angle_of_well);
+            // var_dump($bur);
+            // var_dump($eob_md);
+            // die();
 
             $target_md = ($eob_md + $lineBC);
             $target_displacement = ($lineEC + $eob_displacement);

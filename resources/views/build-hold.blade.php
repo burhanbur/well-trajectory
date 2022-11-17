@@ -30,7 +30,7 @@
     // var xValues = [50,60,70,80,90,100,110,120,130,140,150]; // md
     // var yValues = [7,8,8,9,9,9,10,11,14,14,15]; // tvd
 
-    var xValues = <?= json_encode($mdChartValue) ?>; // md
+    var xValues = <?= json_encode($mdChartValue) ?>; // md // total departure
     var yValues = <?= json_encode($tvdChartValue) ?>; // tvd
 
     var myChart = new Chart("myChart", {
@@ -43,7 +43,7 @@
           backgroundColor: "rgba(0,0,255,1.0)",
           borderColor: "rgba(0,0,255,1.0)",
           borderWidth: 8,
-          data: yValues
+          data: yValues,
         }]
       },
       options: {
@@ -56,7 +56,7 @@
                     ticks: {
                         reverse: true
                     },
-                    stacked: true
+                    stacked: true,
                 }
             ],
             xAxes: [
@@ -160,10 +160,10 @@
                     </tr> -->
                     @foreach($depth as $row)
                         <tr>
-                            <td class="text-center">{{ round($row['md'], 3) }}</td>
-                            <td class="text-center">{{ round($row['inclination'], 6) }}</td>
-                            <td class="text-center">{{ round($row['tvd'], 3) }}</td>
-                            <td class="text-center">{{ round($row['total_departure'], 6) }}</td>
+                            <td class="text-center">{{ round($row['md'], 2) }}</td>
+                            <td class="text-center">{{ round($row['inclination'], 2) }}</td>
+                            <td class="text-center">{{ round($row['tvd'], 2) }}</td>
+                            <td class="text-center">{{ round($row['total_departure'], 2) }}</td>
                             <td class="text-center">{{ $row['status'] }}</td>
                         </tr>
                     @endforeach
