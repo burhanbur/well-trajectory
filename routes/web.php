@@ -28,7 +28,10 @@ Route::group(['prefix' => 'well-trajectory'], function () {
 	Route::post('download-result-build-hold', [BuildHoldController::class, 'downloadResult'])->name('download.result.build.hold');
 
 	Route::get('build-hold-drop', [BuildHoldDropController::class, 'index'])->name('build.hold.drop');
+	Route::post('download-result-build-hold-drop', [BuildHoldDropController::class, 'downloadResult'])->name('download.result.build.hold.drop');
+
 	Route::get('horizontal-well', [HorizontalWellController::class, 'index'])->name('horizontal.well');
+	Route::post('download-result-horizontal-well', [HorizontalWellController::class, 'downloadResult'])->name('download.result.horizontal.well');
 });
 
 Route::group(['prefix' => 'hydraulic'], function () {

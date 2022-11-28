@@ -6,7 +6,7 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class BuildHoldExport implements FromCollection, WithHeadings
+class HorizontalWellExport implements FromCollection, WithHeadings
 {
     use Exportable;
     
@@ -38,8 +38,8 @@ class BuildHoldExport implements FromCollection, WithHeadings
             'Measure Depth',
             'Inclination',
             'TVD',
-            'Total Departure',
-            'Status',
+            'Horizontal Departure',
+            'Description',
         ];
     }
 }

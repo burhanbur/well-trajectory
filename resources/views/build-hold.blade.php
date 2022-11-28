@@ -21,6 +21,7 @@
         border: 1px solid #ced4da;
         border-radius: 0.25rem;
         transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+        margin-bottom: 0.75rem;
     }
 
     .sidebar {
@@ -36,7 +37,7 @@
 @endsection
 
 @section('js')
-<script>
+{{-- <script>
     var xValues = <?= json_encode($mdChartValue) ?>; // md // total departure
     var yValues = <?= json_encode($tvdChartValue) ?>; // tvd
 
@@ -79,7 +80,7 @@
         }
       }
     });
-</script>
+</script> --}}
 
 <script>
     var data = <?= json_encode($chart); ?>
@@ -99,7 +100,7 @@
         var z = unpack(rows , 'z');
         var c = unpack(rows , 'color');
 
-        Plotly.newPlot('myDiv', [{
+        Plotly.newPlot('plotly-chart', [{
             type: 'scatter3d',
             mode: 'lines',
             x: x,
@@ -120,11 +121,7 @@
 @endsection
 
 @section('container')
-<div class="container"><br>
-    <h3 class="text-center"> Build Hold </h3>
-
-    <br>
-
+<div class="container" style="padding-top: 1rem;">
     <?php if (is_nan($target_md) || is_nan($target_displacement) || is_nan($eob_md) || is_nan($eob_vd) || is_nan($eob_displacement)): ?>
         <div class="alert alert-danger" role="alert">
             Invalid floating point opertaion.
@@ -142,29 +139,29 @@
             <div class="sidebar">
                 <form method="GET" action="">
                     <label for="bur">Build Up Rate (BUR):</label><br />
-                    <input type="number" step="any" id="bur" name="bur" class="form-control-custom" onkeypress="nextfield('calculate')" required value="{{ $request->get('bur') }}"/> deg/100ft
+                    <input type="number" step="any" id="bur" name="bur" class="form-control-custom" required value="{{ $request->get('bur') }}"/> deg/100ft
 
-                    <br><br>
+                    <br>
 
-                    <label for="kop">Kick of Point (KOP):</label><br />
-                    <input type="number" step="any" id="kop" name="kop" class="form-control-custom" onkeypress="nextfield('target')" required value="{{ $request->get('kop') }}" /> ft
+                    <label for="kop">Kick Off Point (KOP):</label><br />
+                    <input type="number" step="any" id="kop" name="kop" class="form-control-custom" required value="{{ $request->get('kop') }}" /> ft
 
-                    <br><br>
+                    <br>
 
                     <label for="target">Target (TVD):</label><br />
-                    <input type="number" step="any" id="target" name="target" class="form-control-custom" onkeypress="nextfield('n')" required value="{{ $request->get('target') }}" /> ft
+                    <input type="number" step="any" id="target" name="target" class="form-control-custom" required value="{{ $request->get('target') }}" /> ft
 
-                    <br><br>
+                    <br>
 
                     <label for="n">Northing:</label><br />
-                    <input type="number" step="any" id="n" name="n" class="form-control-custom" onkeypress="nextfield('e')"  required value="{{ $request->get('n') }}" /> ft
+                    <input type="number" step="any" id="n" name="n" class="form-control-custom" required value="{{ $request->get('n') }}" /> ft
 
-                    <br><br>
+                    <br>
 
                     <label for="e">Easting:</label><br />
-                    <input type="number" step="any" id="e" name="e" class="form-control-custom" onkeypress="nextfield('bur')" required value="{{ $request->get('e') }}"/> ft
+                    <input type="number" step="any" id="e" name="e" class="form-control-custom" required value="{{ $request->get('e') }}"/> ft
 
-                    <br><br>
+                    <br>
 
                     <div class="text-center">
                         <button type="submit" class="btn btn-primary" id="calculate"> <i class="fa fa-calculator"></i> &nbsp; Calculate </button>
@@ -172,7 +169,6 @@
                 </form>
 
                 <?php if ($bur && $target && $n && $e && $kop): ?>
-                
                     <hr>
 
                     <div class="text-center">
@@ -187,12 +183,16 @@
         </div>
 
         <div class="col-md-8">
+            <h3 class="text-center"> Build Hold </h3>
+
+            <br>
+
             <div class="row">
                 <div class="graph-area">
 
-                <?php if ((!is_nan($target_md) || !is_nan($target_displacement) || !is_nan($eob_md) || !is_nan($eob_vd) || !is_nan($eob_displacement)) && $bur || $kop || $target || $n || $e): ?>
+                <?php if (!is_nan($target_md) || !is_nan($target_displacement) || !is_nan($eob_md) || !is_nan($eob_vd) || !is_nan($eob_displacement)): ?>
                     <!-- <canvas id="myChart" style="width:100%;"></canvas> -->
-                    <div id="myDiv"></div>
+                    <div id="plotly-chart"></div>
                 <?php endif; ?>
                 </div>            
             </div>
@@ -205,7 +205,7 @@
                         <h3 class="text-center">End of Build</h3>
                         <table class="table table-striped" id="eob-table">
                             <tr>
-                                <th>MD</th>
+                                <th>Measure Depth</th>
                                 <td>{{ round($eob_md, 3) }}</td>
                             </tr>
                             <tr>
@@ -226,7 +226,7 @@
                         <h3 class="text-center">Target</h3>
                         <table class="table table-striped" id="target-table">
                             <tr>
-                                <th>MD</th>
+                                <th>Measure Depth</th>
                                 <td>{{ round($target_md, 3) }}</td>
                             </tr>
                             <tr>
@@ -244,23 +244,23 @@
                 <br />
                 <h3 class="text-center">Depth Table</h3>
                 <table class="table table-striped" id="depth-table">
-                <tr>
-                    <th class="text-center">MD (ft) </th>
-                    <th class="text-center">Inclination (deg)</th>
-                    <th class="text-center">TVD (ft) </th>
-                    <th class="text-center">Total Departure (ft)</th>
-                    <th class="text-center">Status</th>
-                </tr>
-                @foreach($depth as $row)
-                    @php $status = ['KOP', 'End of Build', 'Target']; @endphp
-                    <tr class="@if (in_array($row['status'], $status)) highlight @endif">
-                        <td class="text-center">{{ round($row['md'], 2) }}</td>
-                        <td class="text-center">{{ round($row['inclination'], 2) }}</td>
-                        <td class="text-center">{{ round($row['tvd'], 2) }}</td>
-                        <td class="text-center">{{ round($row['total_departure'], 2) }}</td>
-                        <td class="text-center">{{ $row['status'] }}</td>
+                    <tr>
+                        <th class="text-center">MD (ft) </th>
+                        <th class="text-center">Inclination (deg)</th>
+                        <th class="text-center">TVD (ft) </th>
+                        <th class="text-center">Total Departure (ft)</th>
+                        <th class="text-center">Status</th>
                     </tr>
-                @endforeach
+                    @foreach($depth as $row)
+                        @php $status = ['KOP', 'End of Build', 'Target']; @endphp
+                        <tr class="@if (in_array($row['status'], $status)) highlight @endif">
+                            <td class="text-center">{{ round($row['md'], 2) }}</td>
+                            <td class="text-center">{{ round($row['inclination'], 2) }}</td>
+                            <td class="text-center">{{ round($row['tvd'], 2) }}</td>
+                            <td class="text-center">{{ round($row['total_departure'], 2) }}</td>
+                            <td class="text-center">{{ $row['status'] }}</td>
+                        </tr>
+                    @endforeach
                 </table>
             </div>
         </div>

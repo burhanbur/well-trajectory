@@ -6,7 +6,7 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class BuildHoldExport implements FromCollection, WithHeadings
+class BuildHoldDropExport implements FromCollection, WithHeadings
 {
     use Exportable;
     
@@ -18,17 +18,17 @@ class BuildHoldExport implements FromCollection, WithHeadings
     public function collection()
     {
         $data = [];
-
+        
         foreach ($this->data as $key => $value) {
             $data[] = [
                 'md' => ($value->md) ? $value->md : '0',
-                'inclination' => ($value->inclination) ? $value->inclination : '0',
+                'inclination' => ($value->status == 'Target') ? '0' : $value->inclination,
                 'tvd' => ($value->tvd) ? $value->tvd : '0',
                 'total_departure' => ($value->total_departure) ? $value->total_departure : '0',
                 'status' => $value->status,
             ];
         }
-
+        
         return collect($data);
     }
 

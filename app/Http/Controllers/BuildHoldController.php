@@ -33,7 +33,7 @@ class BuildHoldController extends Controller
         $target_displacement = 0;
 
         $bur = $request->input('bur'); // build up rate
-        $kop = $request->input('kop'); // kick of point
+        $kop = $request->input('kop'); // kick off point
 
         $target = $request->input('target'); // target
         $n = $request->input('n'); // northing
@@ -244,7 +244,7 @@ class BuildHoldController extends Controller
                         'target' => 0, 
                         'n' => 0, 
                         'e' => 0
-                    ])->with('error', 'Woops, looks like something went wrong.');
+                    ])->with('error', $this->errorMessage);
             }
         } else {
             $depth[0]['md'] = 0;
