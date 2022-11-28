@@ -190,7 +190,7 @@
             <div class="row">
                 <div class="graph-area">
 
-                <?php if (!is_nan($target_md) || !is_nan($target_displacement) || !is_nan($eob_md) || !is_nan($eob_vd) || !is_nan($eob_displacement)): ?>
+                <?php if ((!is_nan($target_md) || !is_nan($target_displacement) || !is_nan($eob_md) || !is_nan($eob_vd) || !is_nan($eob_displacement)) && $bur || $kop || $target || $n || $e): ?>
                     <!-- <canvas id="myChart" style="width:100%;"></canvas> -->
                     <div id="myDiv"></div>
                 <?php endif; ?>

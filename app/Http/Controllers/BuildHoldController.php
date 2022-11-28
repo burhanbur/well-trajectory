@@ -20,6 +20,7 @@ class BuildHoldController extends Controller
     public function index(Request $request)
     {
         $depth = [];
+        $plotlyChart = [];
 
         $mdChartValue = [];
         $tvdChartValue = [];
@@ -225,8 +226,6 @@ class BuildHoldController extends Controller
                 $tvdChartValue[] = $tvd;
 
                 // 3d chart
-                $plotlyChart = [];
-
                 for ($i=0; $i < count((array) $mdChartValue); $i++) {
                     $plotlyChart[] = [
                         'x' => (string) $mdChartValue[$i],
