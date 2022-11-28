@@ -222,7 +222,19 @@ class BuildHoldController extends Controller
                 $depth[$inc+1]['status'] = $status;
 
                 $mdChartValue[] = round($total_departure, 2);
-                $tvdChartValue[] = $tvd;   
+                $tvdChartValue[] = $tvd;
+
+                // 3d chart
+                $plotlyChart = [];
+
+                for ($i=0; $i < count((array) $mdChartValue); $i++) {
+                    $plotlyChart[] = [
+                        'x' => (string) $mdChartValue[$i],
+                        'y' => (string) $tvdChartValue[$i],
+                        'z' => '0',
+                        'color' => '1'
+                    ];
+                }
             } catch (\Exception $ex) {
                 return redirect()->back()->with('error', $this->errorMessage);
             } catch (\Throwable $err) {
@@ -244,6 +256,7 @@ class BuildHoldController extends Controller
         }
 
         return view('build-hold',[
+            'chart' => $plotlyChart,
             'request' => $request,
             'depth' => $depth,
             'eob_md' => $eob_md,
