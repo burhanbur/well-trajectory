@@ -22,14 +22,21 @@
         border-radius: 0.25rem;
         transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
     }
+
+    .sidebar {
+        position: fixed;
+        width:25%;
+    }
+
+    .highlight {
+        background-color: rgba(189, 0, 0, 0.8);
+        color: white;
+    }
 </style>
 @endsection
 
 @section('js')
 <script>
-    // var xValues = [50,60,70,80,90,100,110,120,130,140,150]; // md
-    // var yValues = [7,8,8,9,9,9,10,11,14,14,15]; // tvd
-
     var xValues = <?= json_encode($mdChartValue) ?>; // md // total departure
     var yValues = <?= json_encode($tvdChartValue) ?>; // tvd
 
@@ -40,8 +47,8 @@
         datasets: [{
           fill: false,
           lineTension: 0,
-          backgroundColor: "rgba(0,0,255,1.0)",
-          borderColor: "rgba(0,0,255,1.0)",
+          backgroundColor: "rgba(8, 73, 153, 1.0)",
+          borderColor: "rgba(8, 73, 153, 1.0)",
           borderWidth: 8,
           data: yValues,
         }]
@@ -77,100 +84,147 @@
 
 @section('container')
 <div class="container"><br>
-    <h3 class="text-center"> Build Hold </h3><br>
+    <h3 class="text-center"> Build Hold </h3>
+
+    <br>
+
+    <?php if (is_nan($target_md) || is_nan($target_displacement) || is_nan($eob_md) || is_nan($eob_vd) || is_nan($eob_displacement)): ?>
+        <div class="alert alert-danger" role="alert">
+            Invalid floating point opertaion.
+        </div>
+    <?php endif ?>
+
+    <?php if (\Session::get('error')): ?>
+        <div class="alert alert-danger" role="alert">
+            {{ \Session::get('error') }}
+        </div>
+    <?php endif ?>
+
     <div class="row">
         <div class="col-md-4">
-            <div class="inputArea">
+            <div class="sidebar">
                 <form method="GET" action="">
-                    <label for="kop">Kick of Point (V1):</label><br />
-                    <input type="number" step="any" id="kop" name="kop" class="form-control-custom" onkeypress="nextfield('target')" required value="{{ $request->get('kop') }}" /> ft<br />
-                    <label for="target">Target (V3):</label><br />
-                    <input type="number" step="any" id="target" name="target" class="form-control-custom" onkeypress="nextfield('n')" required value="{{ $request->get('target') }}" /> ft<br />
-                    <label for="n">Northing:</label><br />
-                    <input type="number" step="any" id="n" name="n" class="form-control-custom" onkeypress="nextfield('e')"  required value="{{ $request->get('n') }}" /> ft<br />
-                    <label for="e">Easting:</label><br />
-                    <input type="number" step="any" id="e" name="e" class="form-control-custom" onkeypress="nextfield('bur')" required value="{{ $request->get('e') }}"/> ft<br />
                     <label for="bur">Build Up Rate (BUR):</label><br />
-                    <input type="number" step="any" id="bur" name="bur" class="form-control-custom" onkeypress="nextfield('calculate')" required value="{{ $request->get('bur') }}"/> deg/100ft<br /><br />
-                    <button type="submit" class="btn btn-primary" id="calculate"> <i class="fa fa-calculator"></i> Calculate </button>
+                    <input type="number" step="any" id="bur" name="bur" class="form-control-custom" onkeypress="nextfield('calculate')" required value="{{ $request->get('bur') }}"/> deg/100ft
+
+                    <br><br>
+
+                    <label for="kop">Kick of Point (KOP):</label><br />
+                    <input type="number" step="any" id="kop" name="kop" class="form-control-custom" onkeypress="nextfield('target')" required value="{{ $request->get('kop') }}" /> ft
+
+                    <br><br>
+
+                    <label for="target">Target (TVD):</label><br />
+                    <input type="number" step="any" id="target" name="target" class="form-control-custom" onkeypress="nextfield('n')" required value="{{ $request->get('target') }}" /> ft
+
+                    <br><br>
+
+                    <label for="n">Northing:</label><br />
+                    <input type="number" step="any" id="n" name="n" class="form-control-custom" onkeypress="nextfield('e')"  required value="{{ $request->get('n') }}" /> ft
+
+                    <br><br>
+
+                    <label for="e">Easting:</label><br />
+                    <input type="number" step="any" id="e" name="e" class="form-control-custom" onkeypress="nextfield('bur')" required value="{{ $request->get('e') }}"/> ft
+
+                    <br><br>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary" id="calculate"> <i class="fa fa-calculator"></i> &nbsp; Calculate </button>
+                    </div>
                 </form>
+
+                <?php if ($bur && $target && $n && $e && $kop): ?>
+                
+                    <hr>
+
+                    <div class="text-center">
+                        <form method="POST" action="{{ route('download.result.build.hold') }}">
+                            @csrf
+                            <input type="hidden" name="depth" value="{{ json_encode($depth) }}">
+                            <button type="submit" class="btn btn-success"> <i class="fa fa-download"></i> &nbsp; Download Result </button>
+                        </form>
+                    </div>
+                <?php endif ?>
             </div>
         </div>
+
         <div class="col-md-8">
-            <div class="grafikArea">
-                <canvas id="myChart" style="width:100%; max-width:700px;"></canvas>
+            <div class="row">
+                <div class="graph-area">
+
+                <?php if (!is_nan($target_md) || !is_nan($target_displacement) || !is_nan($eob_md) || !is_nan($eob_vd) || !is_nan($eob_displacement)): ?>
+                    <canvas id="myChart" style="width:100%;"></canvas>
+                <?php endif; ?>
+                </div>            
             </div>
-        </div>
-    </div>
 
-    <div class="output-area">
-        <div class="row">
-            <div class="col-md-4">
-                <div class="endOfBuild">
-                    <br />
-                    <h3 class="text-center">End of Build</h3>
-                    <table class="table table-striped" id="eob-table">
-                    <tr>
-                        <th>MD</th>
-                        <td>{{ round($eob_md, 3) }}</td>
-                    </tr>
-                    <tr>
-                        <th>VD</th>
-                        <td>{{ round($eob_vd, 3) }}</td>
-                    </tr>
-                    <tr>
-                        <th>Displacement</th>
-                        <td>{{ round($eob_displacement, 3) }}</td>
-                    </tr>
-                    </table>
-                    <br />
+            <hr>
 
-                    <h3 class="text-center">Target</h3>
-                    <table class="table table-striped" id="target-table">
-                    <tr>
-                        <th>MD</th>
-                        <td>{{ round($target_md, 3) }}</td>
-                    </tr>
-                    <tr>
-                        <th>Displacement</th>
-                        <td>{{ round($target_displacement, 3) }}</td>
-                    </tr>
-                    </table>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="end-of-build">
+                        <h3 class="text-center">End of Build</h3>
+                        <table class="table table-striped" id="eob-table">
+                            <tr>
+                                <th>MD</th>
+                                <td>{{ round($eob_md, 3) }}</td>
+                            </tr>
+                            <tr>
+                                <th>VD</th>
+                                <td>{{ round($eob_vd, 3) }}</td>
+                            </tr>
+                            <tr>
+                                <th>Displacement</th>
+                                <td>{{ round($eob_displacement, 3) }}</td>
+                            </tr>
+                        </table>
+                        <br />                            
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="target">
+                        <h3 class="text-center">Target</h3>
+                        <table class="table table-striped" id="target-table">
+                            <tr>
+                                <th>MD</th>
+                                <td>{{ round($target_md, 3) }}</td>
+                            </tr>
+                            <tr>
+                                <th>Displacement</th>
+                                <td>{{ round($target_displacement, 3) }}</td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-            <div class="col-md-8">
-                <div class="tabelKedalaman">
-                    <br />
-                    <h3 class="text-center">Depth Table</h3>
-                    <table class="table table-striped" id="depth-table">
-                    <tr>
-                        <th class="text-center">MD (ft) </th>
-                        <th class="text-center">Inclination (deg)</th>
-                        <th class="text-center">TVD (ft) </th>
-                        <th class="text-center">Total Departure (ft)</th>
-                        <th class="text-center">Status</th>
+            <hr>
+
+            <div class="depth-table">
+                <br />
+                <h3 class="text-center">Depth Table</h3>
+                <table class="table table-striped" id="depth-table">
+                <tr>
+                    <th class="text-center">MD (ft) </th>
+                    <th class="text-center">Inclination (deg)</th>
+                    <th class="text-center">TVD (ft) </th>
+                    <th class="text-center">Total Departure (ft)</th>
+                    <th class="text-center">Status</th>
+                </tr>
+                @foreach($depth as $row)
+                    @php $status = ['KOP', 'End of Build', 'Target']; @endphp
+                    <tr class="@if (in_array($row['status'], $status)) highlight @endif">
+                        <td class="text-center">{{ round($row['md'], 2) }}</td>
+                        <td class="text-center">{{ round($row['inclination'], 2) }}</td>
+                        <td class="text-center">{{ round($row['tvd'], 2) }}</td>
+                        <td class="text-center">{{ round($row['total_departure'], 2) }}</td>
+                        <td class="text-center">{{ $row['status'] }}</td>
                     </tr>
-                    <!-- <tr>
-                        <td class="text-center">0</td>
-                        <td class="text-center"></td>
-                        <td class="text-center">0</td>
-                        <td class="text-center">0</td>
-                        <td class="text-center">Vertical</td>
-                    </tr> -->
-                    @foreach($depth as $row)
-                        <tr>
-                            <td class="text-center">{{ round($row['md'], 2) }}</td>
-                            <td class="text-center">{{ round($row['inclination'], 2) }}</td>
-                            <td class="text-center">{{ round($row['tvd'], 2) }}</td>
-                            <td class="text-center">{{ round($row['total_departure'], 2) }}</td>
-                            <td class="text-center">{{ $row['status'] }}</td>
-                        </tr>
-                    @endforeach
-                    </table>
-                </div>
+                @endforeach
+                </table>
             </div>
-            
         </div>
     </div>
 </div>

@@ -25,6 +25,8 @@ Route::get('/', [BuildHoldController::class, 'index']);
 
 Route::group(['prefix' => 'well-trajectory'], function () {
 	Route::get('build-hold', [BuildHoldController::class, 'index'])->name('build.hold');
+	Route::post('download-result-build-hold', [BuildHoldController::class, 'downloadResult'])->name('download.result.build.hold');
+
 	Route::get('build-hold-drop', [BuildHoldDropController::class, 'index'])->name('build.hold.drop');
 	Route::get('horizontal-well', [HorizontalWellController::class, 'index'])->name('horizontal.well');
 });
