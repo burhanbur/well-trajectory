@@ -40,7 +40,7 @@
 <script>
     var data = <?= json_encode($chart); ?>
 
-    d3.csv('https://raw.githubusercontent.com/plotly/datasets/master/3d-line1.csv', function(err, rows) {
+    d3.csv('', function(err, rows) {
         function unpack(rows, key) {
             return rows.map(function(row)
             { 
@@ -48,7 +48,7 @@
             }); 
         }
 
-        // rows = data;
+        rows = data;
 
         var x = unpack(rows , 'x');
         var y = unpack(rows , 'y');
@@ -135,23 +135,23 @@
                         <table class="table table-striped" id="calculation-step">
 	                        <tr>
 	                            <th>Horizontal Disp</th>
-	                            <td>0</td>
+	                            <td>{{ $horizontal_displacement }}</td>
 	                        </tr>
 	                        <tr>
 	                            <th>Rb</th>
-	                            <td>0</td>
+	                            <td>{{ $rb }}</td>
 	                        </tr>
 	                        <tr>
 	                            <th>L</th>
-	                            <td>0</td>
+	                            <td>{{ $l }}</td>
 	                        </tr>
 	                        <tr>
 	                            <th>Measure Depth (MD)</th>
-	                            <td>0</td>
+	                            <td>{{ $md }}</td>
 	                        </tr>
 	                        <tr>
 	                            <th>Build Up Rate (BUR)</th>
-	                            <td>0</td>
+	                            <td>{{ $bur }}</td>
 	                        </tr>
                         </table>
                         <br />
@@ -164,23 +164,23 @@
                 		<table class="table table-striped" id="output">
 	                        <tr>
 	                            <th>Measure Depth (MD)</th>
-	                            <td>0</td>
+	                            <td>{{ $md }}</td>
 	                        </tr>
 	                        <tr>
 	                            <th>Build Up Rate (BUR)</th>
-	                            <td>0</td>
+	                            <td>{{ $bur }}</td>
 	                        </tr>
 	                        <tr>
 	                            <th>End of Build</th>
-	                            <td>0</td>
+	                            <td>{{ $eob }}</td>
 	                        </tr>
 	                        <tr>
 	                            <th>North</th>
-	                            <td>0</td>
+	                            <td>{{ $n }}</td>
 	                        </tr>
 	                        <tr>
 	                            <th>East</th>
-	                            <td>0</td>
+	                            <td>{{ $e }}</td>
 	                        </tr>                			
                 		</table>
                 		<br />
@@ -202,13 +202,13 @@
                         <th class="text-center">Description</th>
                     </tr>
                     @foreach($depth as $row)
-                        @php $description = ['End of Build', 'Target']; @endphp
-                        <tr class="@if (in_array($row['description'], $description)) highlight @endif">
+                        @php $status = ['KOP', 'End of Build', 'Target']; @endphp
+                        <tr class="@if (in_array($row['status'], $status)) highlight @endif">
                             <td class="text-center">{{ round($row['md'], 3) }}</td>
-                            <td class="text-center">@if ($row['description'] == 'Target') {{ round($row['inclination'], 6) }} @else {{ $row['inclination'] }} @endif</td>
+                            <td class="text-center">{{ $row['inclination'] }}</td>
                             <td class="text-center">{{ round($row['tvd'], 3) }}</td>
                             <td class="text-center">{{ round($row['horizontal_departure'], 6) }}</td>
-                            <td class="text-center">{{ $row['description'] }}</td>
+                            <td class="text-center">{{ $row['status'] }}</td>
                         </tr>
                     @endforeach
                 </table>

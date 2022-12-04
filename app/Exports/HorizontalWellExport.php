@@ -24,7 +24,7 @@ class HorizontalWellExport implements FromCollection, WithHeadings
                 'md' => ($value->md) ? $value->md : '0',
                 'inclination' => ($value->inclination) ? $value->inclination : '0',
                 'tvd' => ($value->tvd) ? $value->tvd : '0',
-                'total_departure' => ($value->total_departure) ? $value->total_departure : '0',
+                'horizontal_departure' => ($value->horizontal_departure) ? $value->horizontal_departure : '0',
                 'status' => $value->status,
             ];
         }
