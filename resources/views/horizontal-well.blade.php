@@ -63,13 +63,18 @@
             z: z,
             opacity: 1,
             line: {
-            width: 6,
-            color: c,
-            reversescale: false
+	            width: 6,
+	            color: c,
+	            reversescale: false
             }
         }], 
         {
-            height: 640
+            height: 640,
+            scene: {
+				xaxis:{title: 'Northing'},
+				yaxis:{title: 'Depth (feet)'},
+				zaxis:{title: 'Easting'},
+			},
         });
     });
 </script>

@@ -69,7 +69,12 @@
             }
         }], 
         {
-            height: 640
+            height: 640,
+            scene: {
+                xaxis:{title: 'Northing'},
+                yaxis:{title: 'Depth (feet)'},
+                zaxis:{title: 'Easting'},
+            },
         });
     });
 </script>
