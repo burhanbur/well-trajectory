@@ -152,14 +152,7 @@ class HorizontalWellController extends Controller
                     ];
                 }
             } catch (\Exception $ex) {
-               return redirect()->back()->with('error', $this->errorMessage);
-            } catch (\Throwable $err) {
-                return redirect()->route('horizontal.well', 
-                    [
-                        'kop' => 0, 
-                        'target' => 0, 
-                        'e' => 0
-                    ])->with('error', $this->errorMessage);
+
             }
         } else {
             $depth[0]['md'] = 0;
@@ -169,9 +162,24 @@ class HorizontalWellController extends Controller
             $depth[0]['status'] = '-';
         }
 
-        return response()->json([
+        $returnValue = [
+            'chart' => $chart,
+            'depth' => $depth,
+            'horizontal_displacement' => $horizontal_displacement,
+            'rb' => $rb,
+            'l' => $l,
+            'md' => $md,
+            'bur' => $bur,
+            'eob' => $eob,
+            'n' => $n,
+            'tvdChartValue' => $tvdChartValue,
+            'tvdChartValue' => $tvdChartValue,
+            'kop' => $kop,
+            'target' => $target,
+            'e' => $e,
+        ];
 
-        ]);
+        return response()->json($returnValue);
     }
 
     public function downloadResult(Request $request)
@@ -193,7 +201,7 @@ class HorizontalWellController extends Controller
         } catch (\Exception $ex) {
             return redirect()->back()->with('error', $this->errorMessage);
         } catch (\Throwable $err) {
-            return redirect()->route('horizontal.well')->with('error', $this->errorMessage);
+            return redirect()->back()->with('error', $this->errorMessage);
         }
     }
 }

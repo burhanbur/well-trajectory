@@ -20,6 +20,7 @@ class BuildHoldController extends Controller
 
     public function index(Request $request)
     {
+        $returnValue = [];
         $depth = [];
         $plotlyChart = [];
 
@@ -236,16 +237,7 @@ class BuildHoldController extends Controller
                     ];
                 }
             } catch (\Exception $ex) {
-                return redirect()->back()->with('error', $this->errorMessage);
-            } catch (\Throwable $err) {
-                return redirect()->route('build.hold', 
-                    [
-                        'bur' => 0, 
-                        'kop' => 0, 
-                        'target' => 0, 
-                        'n' => 0, 
-                        'e' => 0
-                    ])->with('error', $this->errorMessage);
+
             }
         } else {
             $depth[0]['md'] = 0;
@@ -255,9 +247,8 @@ class BuildHoldController extends Controller
             $depth[0]['status'] = '-';
         }
 
-        return response()->json([
+        $returnValue = [
             'chart' => $plotlyChart,
-            'request' => $request,
             'depth' => $depth,
             'eob_md' => $eob_md,
             'eob_vd' => $eob_vd,
@@ -271,7 +262,9 @@ class BuildHoldController extends Controller
             'target' => $target,
             'n' => $n,
             'e' => $e,
-        ]);
+        ];
+
+        return response()->json($returnValue);
     
     }
 

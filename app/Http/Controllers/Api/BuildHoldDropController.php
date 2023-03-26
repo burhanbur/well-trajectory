@@ -20,6 +20,7 @@ class BuildHoldDropController extends Controller
 
     public function index(Request $request)
     {   
+        $returnValue = [];
         $depth = [];
         $chart = [];
 
@@ -262,17 +263,7 @@ class BuildHoldDropController extends Controller
                     ];
                 }
             } catch (\Exception $ex) {
-                return redirect()->back()->with('error', $this->errorMessage);
-            } catch (\Throwable $err) {
-                return redirect()->route('build.hold.drop', 
-                    [
-                        'bur' => 0, 
-                        'kop' => 0, 
-                        'dor' => 0, 
-                        'target' => 0, 
-                        'n' => 0, 
-                        'e' => 0
-                    ])->with('error', $this->errorMessage);
+
             }
         } else {
             $depth[0]['md'] = 0;
@@ -282,9 +273,29 @@ class BuildHoldDropController extends Controller
             $depth[0]['status'] = '-';
         }
 
-        return response()->json([
-            
-        ]);
+        $returnValue = [
+            'chart' => $chart,
+            'depth' => $depth,
+            'eob_md' => $eob_md,
+            'eob_vd' => $eob_vd,
+            'eob_displacement' => $eob_displacement,
+            'sod_md' => $sod_md,
+            'sod_vd' => $sod_vd,
+            'sod_displacement' => $sod_displacement,
+            'eod_md' => $eod_md,
+            'eod_vd' => $eod_vd,
+            'eod_displacement' => $eod_displacement,
+            'mdChartValue' => $mdChartValue,
+            'tvdChartValue' => $tvdChartValue,
+            'bur' => $bur,
+            'kop' => $kop,
+            'dor' => $dor,
+            'target' => $target,
+            'n' => $n,
+            'e' => $e,
+        ];
+
+        return response()->json($returnValue);
     }
 
     public function downloadResult(Request $request)
@@ -306,7 +317,7 @@ class BuildHoldDropController extends Controller
         } catch (\Exception $ex) {
             return redirect()->back()->with('error', $this->errorMessage);
         } catch (\Throwable $err) {
-            return redirect()->route('build.hold.drop')->with('error', $this->errorMessage);
+            return redirect()->back()->with('error', $this->errorMessage);
         }
     }
 }
