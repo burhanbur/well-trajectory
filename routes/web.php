@@ -5,9 +5,6 @@ use App\Http\Controllers\BuildHoldController;
 use App\Http\Controllers\BuildHoldDropController;
 use App\Http\Controllers\HorizontalWellController;
 
-use App\Http\Controllers\EquivalentCirculatingController;
-use App\Http\Controllers\FlowrateMinimumController;
-use App\Http\Controllers\PressureLossController;
 use App\Http\Controllers\RheologicalController;
 
 /*

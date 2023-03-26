@@ -3,6 +3,10 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\Api\BuildHoldController;
+use App\Http\Controllers\Api\BuildHoldDropController;
+use App\Http\Controllers\Api\HorizontalWellController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -14,6 +18,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
+Route::get('build-hold', [BuildHoldController::class, 'index'])->name('build.hold');
+Route::post('download-result-build-hold', [BuildHoldController::class, 'downloadResult'])->name('download.result.build.hold');
+
+Route::get('build-hold-drop', [BuildHoldDropController::class, 'index'])->name('build.hold.drop');
+Route::post('download-result-build-hold-drop', [BuildHoldDropController::class, 'downloadResult'])->name('download.result.build.hold.drop');
+
+Route::get('horizontal-well', [HorizontalWellController::class, 'index'])->name('horizontal.well');
+Route::post('download-result-horizontal-well', [HorizontalWellController::class, 'downloadResult'])->name('download.result.horizontal.well');
