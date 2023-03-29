@@ -142,14 +142,7 @@ class HorizontalWellService
                     ];
                 }
             } catch (\Exception $ex) {
-               return redirect()->back()->with('error', $this->errorMessage);
-            } catch (\Throwable $err) {
-                return redirect()->route('horizontal.well', 
-                    [
-                        'kop' => 0, 
-                        'target' => 0, 
-                        'e' => 0
-                    ])->with('error', $this->errorMessage);
+                
             }
         } else {
             $depth[0]['md'] = 0;

@@ -226,16 +226,7 @@ class BuildHoldService
                     ];
                 }
             } catch (\Exception $ex) {
-                return redirect()->back()->with('error', $this->errorMessage);
-            } catch (\Throwable $err) {
-                return redirect()->route('build.hold', 
-                    [
-                        'bur' => 0, 
-                        'kop' => 0, 
-                        'target' => 0, 
-                        'n' => 0, 
-                        'e' => 0
-                    ])->with('error', $this->errorMessage);
+                
             }
         } else {
             $depth[0]['md'] = 0;
