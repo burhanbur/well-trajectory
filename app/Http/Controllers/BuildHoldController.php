@@ -291,9 +291,9 @@ class BuildHoldController extends Controller
 
             return Excel::download(new BuildHoldExport($params), 'build-hold-result.xlsx');   
         } catch (\Exception $ex) {
-            return redirect()->back()->with('error', $this->errorMessage);
+            return redirect()->back()->with('error', $ex->getMessage().' in file '.$ex->getFile().' in line '.$ex->getLine());
         } catch (\Throwable $err) {
-            return redirect()->route('build.hold')->with('error', $this->errorMessage);
+            return redirect()->back()->with('error', $err->getMessage().' in file '.$err->getFile().' in line '.$err->getLine());
         }
     }
 }

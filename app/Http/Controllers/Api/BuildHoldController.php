@@ -25,7 +25,6 @@ class BuildHoldController extends Controller
 
         $logic = new BuildHoldService;
         $returnValue = $logic->calculate($request);
-        // $returnValue = [            'bur' => $request->get('bur')        ];
 
         return response()->json($returnValue);
     
@@ -33,6 +32,7 @@ class BuildHoldController extends Controller
 
     public function downloadResult(Request $request)
     {
+        $returnValue = [];
         $data = $request->all();
 
         $validator = Validator::make($data, [
@@ -40,17 +40,23 @@ class BuildHoldController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect()->back()->with('error', $validator->errors()->first());
+            $returnValue = [
+                'error' => false,
+                'message' => $validator->errors()->first()
+            ];
         }
 
         try {
-            $params = json_decode($data['depth']);
+            $params = $data['depth'];
 
             return Excel::download(new BuildHoldExport($params), 'build-hold-result.xlsx');   
         } catch (\Exception $ex) {
-            return redirect()->back()->with('error', $this->errorMessage);
-        } catch (\Throwable $err) {
-            return redirect()->back()->with('error', $this->errorMessage);
+            $returnValue = [
+                'error' => false,
+                'message' => $ex->getMessage()
+            ];
         }
+
+        return response()->json($returnValue);
     }
 }
