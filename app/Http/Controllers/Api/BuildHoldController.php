@@ -25,6 +25,7 @@ class BuildHoldController extends Controller
 
         $logic = new BuildHoldService;
         $returnValue = $logic->calculate($request);
+        // $returnValue = [            'bur' => $request->get('bur')        ];
 
         return response()->json($returnValue);
     

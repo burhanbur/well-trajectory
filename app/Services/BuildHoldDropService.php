@@ -28,13 +28,13 @@ class BuildHoldDropService
         $eod_vd = 0;
         $eod_displacement = 0;
 
-        $kop = $request->input('kop'); // kick off point
-        $bur = $request->input('bur'); // build up rate
-        $dor = $request->input('dor'); // drop off rate
+        $kop = $request->get('kop'); // kick off point
+        $bur = $request->get('bur'); // build up rate
+        $dor = $request->get('dor'); // drop off rate
 
-        $target = $request->input('target'); // target end off drop
-        $n = $request->input('n'); // northing
-        $e = $request->input('e'); // easting
+        $target = $request->get('target'); // target end off drop
+        $n = $request->get('n'); // northing
+        $e = $request->get('e'); // easting
 
         if ($kop || $bur || $dor || $target || $n || $e) {
             $pi = pi();
