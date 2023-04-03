@@ -27,7 +27,6 @@ class BuildHoldController extends Controller
         $returnValue = $logic->calculate($request);
 
         return response()->json($returnValue);
-    
     }
 
     public function downloadResult(Request $request)

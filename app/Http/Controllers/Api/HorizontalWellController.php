@@ -31,6 +31,7 @@ class HorizontalWellController extends Controller
 
     public function downloadResult(Request $request)
     {
+        $returnValue = [];
         $data = $request->all();
 
         $validator = Validator::make($data, [
@@ -38,17 +39,23 @@ class HorizontalWellController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect()->back()->with('error', $validator->errors()->first());
+            $returnValue = [
+                'error' => false,
+                'message' => $validator->errors()->first()
+            ];
         }
 
         try {
-            $params = json_decode($data['depth']);
+            $params = $data['depth'];
 
-            return Excel::download(new HorizontalWellExport($params), 'horizontal-well-result.xlsx');   
+            return Excel::download(new HorizontalWellExport($params), 'horizontal-well-result.xlsx'); 
         } catch (\Exception $ex) {
-            return redirect()->back()->with('error', $this->errorMessage);
-        } catch (\Throwable $err) {
-            return redirect()->back()->with('error', $this->errorMessage);
+            $returnValue = [
+                'error' => false,
+                'message' => $ex->getMessage()
+            ];
         }
+
+        return response()->json($returnValue);
     }
 }
