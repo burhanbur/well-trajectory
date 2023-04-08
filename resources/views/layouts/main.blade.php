@@ -45,9 +45,9 @@
       <li class="nav-item">
         <a class="nav-link @if (Request::is('well-trajectory/build-hold-drop*')) active @endif" href="{{ route('build.hold.drop') }}"><i class="fas fa-chart-area"></i> Build Hold Drop &nbsp;</a>
       </li>
-      <li class="nav-item">
+      {{-- <li class="nav-item">
         <a class="nav-link @if (Request::is('well-trajectory/horizontal-well*')) active @endif" href="{{ route('horizontal.well') }}"><i class="fa fa-cogs"></i> Horizontal Well</a>
-      </li>
+      </li> --}}
     </ul>
   </div>
 </nav>
