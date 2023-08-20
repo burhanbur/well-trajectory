@@ -26,7 +26,18 @@ class BuildHoldDropController extends Controller
         $logic = new BuildHoldDropService;
         $returnValue = $logic->calculate($request);
 
-        return response()->json($returnValue);
+        $response = [
+            'status' => 'OK',
+            'data' => $returnValue
+        ];
+
+        // $response = [
+        //     'status' => 'ERROR',
+        //     'message' => "The parameter 'drop_off_point' is required"
+        // ];
+
+        // return response()->json($response, 500);
+        return response()->json($response);
     }
 
     public function downloadResult(Request $request)

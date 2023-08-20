@@ -26,7 +26,12 @@ class BuildHoldController extends Controller
         $logic = new BuildHoldService;
         $returnValue = $logic->calculate($request);
 
-        return response()->json($returnValue);
+        $response = [
+            'status' => 'OK',
+            'data' => $returnValue
+        ];
+
+        return response()->json($response);
     }
 
     public function downloadResult(Request $request)
